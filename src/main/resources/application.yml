@@ -1,0 +1,27 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/study
+    username: root
+    password: 1234
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        format_sql : true
+        default_batch_fetch_size: 1000
+
+    show-sql: true
+    open-in-view: false
+
+logging:
+  level:
+    org.hibernate.type: trace
