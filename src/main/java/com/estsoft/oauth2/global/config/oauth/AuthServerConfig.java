@@ -15,9 +15,9 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 @RequiredArgsConstructor
-@EnableAuthorizationServer
+@EnableAuthorizationServer  //OAuth 관련 endpoints 생성
 @Configuration
-public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Value("${spring.security.oauth2.jwt.signkey}")
     private String signKey;
@@ -30,18 +30,20 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
     private final UserDetailsService userDetailsService;
 
+    // 클라이언트 관련 설정
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("root")
-                .secret(passwordEncoder.encode("root"))
-                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                .withClient("root") // client_id
+                .secret(passwordEncoder.encode("root")) // client_secret
+                .authorizedGrantTypes("password", "refresh_token")
                 .scopes("read", "write")
                 .accessTokenValiditySeconds(60 * 60)
                 .refreshTokenValiditySeconds(6 * 60 * 60)
                 .autoApprove(true);
     }
 
+    // 인증, 토큰 엔드포인트, 토큰 서비스를 정의할 수 있다.
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore)
@@ -50,6 +52,7 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
                 .userDetailsService(userDetailsService);
     }
 
+    // jwt 토큰 설정
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
